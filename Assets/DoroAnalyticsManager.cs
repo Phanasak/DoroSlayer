@@ -25,9 +25,16 @@ public class DoroAnalyticsManager : MonoBehaviour
 
     async void Start()
     {
-        await UnityServices.InitializeAsync();
-        AnalyticsService.Instance.StartDataCollection();
-        Debug.Log("[Analytics] Ready!");
+        try
+        {
+            await UnityServices.InitializeAsync();
+            AnalyticsService.Instance.StartDataCollection();
+            Debug.Log("[Analytics] Ready!");
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("[Analytics] Init failed: " + e.Message);
+        }
     }
 
     // ========== game_start ==========
