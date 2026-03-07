@@ -1,4 +1,4 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -12,40 +12,35 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     private void Start()
     {
         gameOverPanel.SetActive(false);
         winPanel.SetActive(false);
-
         playerHealth.OnDeath += ShowGameOver;
     }
 
     public void PlayerWin()
     {
-        // · ¥ßÀπÈ“µË“ß You Win
         winPanel.SetActive(true);
-
-        // À¬ÿ¥‡«≈“„π‡°¡
         Time.timeScale = 0f;
 
-        // ‡≈Ëπ‡ ’¬ß™π– (Optional)
-        // AudioManager.Instance.PlayWinSound();
+        // ‚úÖ ‡πÄ‡∏û‡∏¥‡πà‡∏°‡∏ö‡∏£‡∏£‡∏ó‡∏±‡∏î‡∏ô‡∏µ‡πâ
+        if (DoroAnalyticsManager.Instance != null)
+            DoroAnalyticsManager.Instance.TrackPlayerWin(playerHealth.currentHealth);
     }
 
     public void ShowGameOver()
     {
         gameOverPanel.SetActive(true);
         Time.timeScale = 0f;
+
+        // ‚úÖ ‡πÄ‡∏û‡∏¥‡πà‡∏°‡∏ö‡∏£‡∏£‡∏ó‡∏±‡∏î‡∏ô‡∏µ‡πâ
+        if (DoroAnalyticsManager.Instance != null)
+            DoroAnalyticsManager.Instance.TrackPlayerDeath(playerHealth.currentHealth);
     }
 
     public void RestartGame()

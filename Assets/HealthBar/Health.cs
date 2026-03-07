@@ -1,4 +1,4 @@
-using System;
+Ôªøusing System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,39 +33,51 @@ public class Health : MonoBehaviour
         if (currentHealth > 0)
         {
             anim.SetTrigger("Hurt");
+
+            // ‚úÖ ‡πÄ‡∏û‡∏¥‡πà‡∏°: ‡∏ñ‡πâ‡∏≤‡πÄ‡∏õ‡πá‡∏ô Player ‡πÉ‡∏´‡πâ Track damage
+            if (GetComponent<HeroKnight>() != null)
+            {
+                if (DoroAnalyticsManager.Instance != null)
+                    DoroAnalyticsManager.Instance.TrackPlayerTookDamage(_damage, currentHealth);
+            }
+
             StartCoroutine(Invunerability());
         }
         else
         {
-            if(!dead)
+            if (!dead)
             {
-                
-
                 anim.SetTrigger("Death");
 
-                //Player
                 if (GetComponent<HeroKnight>() != null)
                     GetComponent<HeroKnight>().enabled = false;
-                
-                //Enemy
-                if(GetComponentInParent<EnemyPatrol>() != null)
+
+                if (GetComponentInParent<EnemyPatrol>() != null)
                     GetComponentInParent<EnemyPatrol>().enabled = false;
 
-                if(GetComponent<MeleeEnemy>() != null)
-                 GetComponent<MeleeEnemy>().enabled = false;
-                // ‡æ‘Ë¡ Ë«π®—¥°“√ RangeEnemy
+                if (GetComponent<MeleeEnemy>() != null)
+                    GetComponent<MeleeEnemy>().enabled = false;
+
                 if (GetComponent<RangeEnemy>() != null)
                 {
-                    GetComponent<RangeEnemy>().OnEnemyDeath(); // ‡√’¬°‡¡∏Õ¥‡¡◊ËÕµ“¬
+                    GetComponent<RangeEnemy>().OnEnemyDeath();
                     GetComponent<RangeEnemy>().enabled = false;
                 }
 
+                // ‚úÖ ‡πÄ‡∏û‡∏¥‡πà‡∏°: ‡∏ñ‡πâ‡∏≤‡πÄ‡∏õ‡πá‡∏ô Enemy ‡πÉ‡∏´‡πâ Track enemy_killed
+                if (GetComponent<HeroKnight>() == null)
+                {
+                    string enemyType = gameObject.name;
+                    Health playerHealthComp = GameObject.FindWithTag("Player")?.GetComponent<Health>();
+                    float playerHp = playerHealthComp != null ? playerHealthComp.currentHealth : 0f;
+
+                    if (DoroAnalyticsManager.Instance != null)
+                        DoroAnalyticsManager.Instance.TrackEnemyKilled(enemyType, playerHp);
+                }
 
                 dead = true;
-
                 OnDeath?.Invoke();
             }
-            
         }
     }
     public void AddHealth(float _value)
@@ -95,6 +107,6 @@ public class Health : MonoBehaviour
         }
         Physics2D.IgnoreLayerCollision(10, 11, false);
     }
-    // „π §√‘ªµÏ∑’Ë®—¥°“√ ÿ¢¿“æ»—µ√Ÿ (‡™Ëπ‡¡◊ËÕ HP <= 0)
+    // ‡πÉ‡∏ô‡∏™‡∏Ñ‡∏£‡∏¥‡∏õ‡∏ï‡πå‡∏ó‡∏µ‡πà‡∏à‡∏±‡∏î‡∏Å‡∏≤‡∏£‡∏™‡∏∏‡∏Ç‡∏†‡∏≤‡∏û‡∏®‡∏±‡∏ï‡∏£‡∏π (‡πÄ‡∏ä‡πà‡∏ô‡πÄ‡∏°‡∏∑‡πà‡∏≠ HP <= 0)
     
 }
