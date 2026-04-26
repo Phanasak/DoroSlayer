@@ -77,6 +77,9 @@ public class Health : MonoBehaviour
 
                 dead = true;
                 OnDeath?.Invoke();
+
+                if (GetComponent<HeroKnight>() == null)
+                    GetComponent<DoroCollectible>()?.OnDoroDied();
             }
         }
     }
@@ -93,6 +96,18 @@ public class Health : MonoBehaviour
         StartCoroutine(Invunerability());
 
         
+    }
+
+    void Start()
+    {
+        // โค้ดเดิม...
+
+        // ถ้า object นี้คือ Doro ให้รับค่า HP จาก DifficultyManager
+        if (gameObject.CompareTag("Enemy")) // หรือใช้ tag ที่ Doro ใช้อยู่
+        {
+            if (DifficultyManager.Instance != null)
+                currentHealth = DifficultyManager.Instance.GetDoroHP();
+        }
     }
 
     private IEnumerator Invunerability()
